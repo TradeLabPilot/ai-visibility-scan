@@ -35,6 +35,9 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
     });
 
     const data = await response.json();
+    console.log("ANTHROPIC_STATUS", response.status);
+    console.log("ANTHROPIC_BODY", JSON.stringify(data).slice(0, 4000));
+    console.log("KEY_PRESENT", !!process.env.ANTHROPIC_API_KEY, (process.env.ANTHROPIC_API_KEY || "").slice(0, 8));
     const textBlocks = (data.content || [])
       .filter((b) => b.type === "text")
       .map((b) => b.text)
@@ -42,7 +45,7 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
 
     const match = textBlocks.match(/RESULT_JSON:\s*(\{[\s\S]*\})/);
     if (!match) {
-      return res.status(200).json({ parsed: null, raw: textBlocks });
+      return res.status(200).json({ parsed: null, raw: textBlocks, debug: data });
     }
 
     let parsed;
