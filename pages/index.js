@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Radar, ArrowRight, RotateCcw, TriangleAlert } from "lucide-react";
 
 // ---- CONFIG: swap these for your real values before sharing this link ----
-const BOOKING_LINK = "https://get.agencyailab.com/widget/form/LZZSTp1yAYAS78EmxXF0";
+const BOOKING_LINK = "https://agencyailab.com/fixit-page";
 const BONUS_TEXT = "Book within 24 hours and we'll include your directory sync setup free — a $500 value.";
 
 const SCAN_LINES = [
