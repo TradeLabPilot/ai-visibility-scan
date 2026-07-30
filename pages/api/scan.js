@@ -1,11 +1,45 @@
+// Deploy this as /api/scan.js if using Vercel (zero-config serverless function).
+// Set ANTHROPIC_API_KEY as an environment variable in your hosting provider's
+// dashboard — never hardcode it here or ship it to the browser.
+//
+// OPTIONAL LEAD CAPTURE: set GHL_WEBHOOK_URL as an environment variable to
+// forward the lead into GoHighLevel the moment someone submits the form —
+// before the scan even runs, so the lead is saved even if they close the
+// tab before seeing results.
+//
+// To get a webhook URL: in GHL, create a Workflow with an "Inbound Webhook"
+// trigger. GHL gives you a unique POST URL — paste that in as GHL_WEBHOOK_URL.
+// No API key needed for this method, just that URL.
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { businessName, industry, city } = req.body || {};
-  if (!businessName || !industry || !city) {
-    return res.status(400).json({ error: "Missing businessName, industry, or city" });
+  const { businessName, industry, city, email } = req.body || {};
+  if (!businessName || !industry || !city || !email) {
+    return res.status(400).json({ error: "Missing businessName, industry, city, or email" });
+  }
+
+  // Fire the lead into GHL immediately — don't wait on the scan to finish,
+  // and don't let a webhook failure break the scan itself.
+  if (process.env.GHL_WEBHOOK_URL) {
+    try {
+      await fetch(process.env.GHL_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName,
+          industry,
+          city,
+          email,
+          source: "AI Visibility Scan",
+          submittedAt: new Date().toISOString(),
+        }),
+      });
+    } catch (err) {
+      console.error("GHL webhook forward failed:", err.message);
+    }
   }
 
   const prompt = `You are an AI visibility auditor. Search the web to determine whether the business "${businessName}" (industry: ${industry}, location: ${city}) would likely be named if someone asked an AI assistant like ChatGPT or Perplexity "who is the best ${industry} in ${city}" or "who should I call for ${industry} near ${city}".
