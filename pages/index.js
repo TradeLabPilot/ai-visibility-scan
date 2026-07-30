@@ -81,14 +81,14 @@ export default function Home() {
 
   return (
     <div style={{ background: "#EDE8DC", minHeight: "100vh", color: "#221B12", display: "flex", alignItems: "center", justifyContent: "center", padding: 24, fontFamily: "system-ui, sans-serif" }}>
-      <style>
+      <style>{`
         @keyframes spinSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes pulseGlow { 0%, 100% { opacity: 0.45; transform: scale(0.92); } 50% { opacity: 1; transform: scale(1.12); } }
         @keyframes blipIn { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
         .sweep-anim { animation: spinSweep 2.8s linear infinite; }
         .pulse-glow { animation: pulseGlow 1.6s ease-in-out infinite; }
         .blip-in { animation: blipIn 0.5s ease-out both; }
-      }</style>
+      `}</style>
 
       <div style={{ width: "100%", maxWidth: 448 }}>
         <div style={{ marginBottom: 32, textAlign: "center" }}>
