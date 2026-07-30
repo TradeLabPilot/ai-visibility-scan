@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Radar, ArrowRight, RotateCcw, TriangleAlert } from "lucide-react";
 
-// ---- CONFIG: swap these for your real values before sharing this link ----
-const BOOKING_LINK = "https://agencyailab.com/fixit-page";
-const BONUS_TEXT = "Book within 24 hours and we'll include your directory sync setup free — a $500 value.";
+const BONUS_TEXT =
+  "Book within 24 hours and we'll include your directory sync setup free — a $500 value.";
 
 const SCAN_LINES = [
   "Querying live AI sources...",
@@ -14,7 +13,7 @@ const SCAN_LINES = [
 
 export default function Home() {
   const [phase, setPhase] = useState("form");
-  const [form, setForm] = useState({ businessName: "", industry: "", city: "" });
+  const [form, setForm] = useState({ businessName: "", industry: "", city: "", email: "" });
   const [lineIdx, setLineIdx] = useState(0);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -34,7 +33,7 @@ export default function Home() {
 
   const runScan = async (e) => {
     e.preventDefault();
-    if (!form.businessName.trim() || !form.industry.trim() || !form.city.trim()) return;
+    if (!form.businessName.trim() || !form.industry.trim() || !form.city.trim() || !form.email.trim()) return;
 
     setPhase("scanning");
     setLineIdx(0);
@@ -111,6 +110,11 @@ export default function Home() {
                 <input value={form[field]} onChange={handleChange(field)} style={input} placeholder={field === "city" ? "e.g. Orlando, FL" : ""} />
               </div>
             ))}
+            <div>
+              <label style={label}>Email</label>
+              <input type="email" value={form.email} onChange={handleChange("email")} style={input} placeholder="you@business.com" />
+              <p style={{ color: "#79705C", fontSize: 12, marginTop: 6 }}>So you don't lose your results — we'll send a copy here too.</p>
+            </div>
             <button type="submit" style={{ ...goldBtn, marginTop: 8 }}>
               <Radar size={18} /> Run Visibility Scan
             </button>
@@ -156,7 +160,10 @@ export default function Home() {
               </div>
             )}
 
-            <a href={BOOKING_LINK} target="_blank" rel="noreferrer" style={goldBtn}>
+            <a
+              href={`/fix-plan?business=${encodeURIComponent(form.businessName)}&industry=${encodeURIComponent(form.industry)}&cited=${result.cited}&competitors=${encodeURIComponent((result.competitors || []).join(","))}&email=${encodeURIComponent(form.email)}`}
+              style={goldBtn}
+            >
               Get your fix plan <ArrowRight size={16} />
             </a>
             <p style={{ color: "#79705C", fontSize: 12, textAlign: "center", marginTop: 12 }}>{BONUS_TEXT}</p>
