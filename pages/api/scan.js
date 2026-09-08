@@ -95,22 +95,28 @@ export default async function handler(req, res) {
 
   const prompt = `You are a general-purpose AI assistant with live web access, answering a real person who is about to spend money.
 
-STEP 1 - Answer this question the way you normally would, searching the web first: "Who is the best ${industry} in ${city}? Give me three specific businesses I could call."
-Search before you answer. Name real businesses you actually found. Do not name a business you found no evidence for.
+STEP 1 - Research the category properly. Run SEVERAL different searches, not one. At minimum:
+  "best ${industry} in ${city}"
+  "top rated ${industry} ${city}"
+  "${industry} ${city} reviews"
+  "who should I hire for ${industry} in ${city}"
+Do NOT build your answer on a single ranked list from one site. Corroborate across at least three INDEPENDENT sources before naming anyone. If one aggregator dominates every query, treat that as a finding to report, not as your only evidence.
 
-STEP 2 - Now examine the answer you just gave:
-- Did your own answer include "${businessName}"? Match the name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts.
+STEP 2 - Now answer the question the way you normally would: "Who is the best ${industry} in ${city}? Give me three specific businesses I could call." Name real businesses you actually found. Do not name a business you found no evidence for.
+
+STEP 3 - Now search for the business itself, directly and by name: "${businessName}", "${businessName} ${city}", "${businessName} reviews". Find out what actually exists for it - website, profiles, reviews, listings, mentions, coverage. This step is about THIS business, not the category.
+
+STEP 4 - Report:
+- Did your own STEP 2 answer name "${businessName}"? Match LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A different trading name still counts.
 - Which businesses did you name instead?
-- What did you actually rely on to decide? Name the specific sources, whatever they turned out to be.
+- Up to 3 gaps for this business, based on what STEP 3 actually found. THE THREE GAPS MUST BE MATERIALLY DIFFERENT FROM EACH OTHER - do not restate one absence three ways. Draw on different dimensions where the evidence supports it: what exists but is thin or inconsistent, what is missing entirely, what the named businesses demonstrate that this one does not. Say what the business DOES have before saying what it lacks. Only list a gap you actually saw evidence for. If STEP 3 found too little to judge, say exactly that instead of guessing.
 
-STEP 3 - Now diagnose THIS business specifically. Compare what you found about "${businessName}" against the businesses you did name. Identify up to 3 concrete, checkable gaps - things the named businesses have that this one appears to lack in the places your answer drew from. Be specific and factual: name the source or signal. Only list a gap you actually saw evidence for. If you could not find enough about this business to tell, say exactly that instead of guessing.
-
-Set "cited" to true ONLY if your own STEP 1 answer named the business. If your searches returned too little to answer properly, set confidence to "low" rather than guessing.
+Set "cited" to true ONLY if your own STEP 2 answer named the business. If your searches returned too little to answer properly, set confidence to "low".
 
 Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line is required and must always be the last thing you output.
 
 Write the short summary, then on its own line write exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide", "gaps": ["specific checkable gap 1","gap 2","gap 3"]}`;
+RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide", "gaps": ["specific checkable gap 1","a materially different gap 2","a materially different gap 3"]}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -122,7 +128,7 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 3000,
+        max_tokens: 4000,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
         tools: [{ type: "web_search_20250305", name: "web_search" }],
