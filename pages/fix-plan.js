@@ -27,9 +27,9 @@ export default function FixPlan() {
   const [contact, setContact] = useState({ name: "", phone: "" });
   const [errorMsg, setErrorMsg] = useState("");
 
-  const card = { background: "#FAF7F0", border: "1px solid #D9D0BC", borderRadius: 16, padding: 24 };
-  const label = { color: "#79705C", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", display: "block", marginBottom: 4 };
-  const input = { background: "#EDE8DC", border: "1px solid #D9D0BC", color: "#221B12", width: "100%", borderRadius: 8, padding: "10px 12px", outline: "none", boxSizing: "border-box", fontSize: 14 };
+  const card = { background: "#FFFFFF", border: "1px solid #D3DEE7", borderRadius: 16, padding: 24 };
+  const label = { color: "#5A7186", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", display: "block", marginBottom: 4 };
+  const input = { background: "#F4F7FA", border: "1px solid #D3DEE7", color: "#16232E", width: "100%", borderRadius: 8, padding: "10px 12px", outline: "none", boxSizing: "border-box", fontSize: 14 };
 
   const reasons = wasCited
     ? [
@@ -78,13 +78,13 @@ export default function FixPlan() {
   };
 
   return (
-    <div style={{ background: "#EDE8DC", minHeight: "100vh", color: "#221B12", fontFamily: "system-ui, sans-serif", padding: "48px 24px" }}>
+    <div style={{ background: "#F4F7FA", minHeight: "100vh", color: "#16232E", fontFamily: "system-ui, sans-serif", padding: "48px 24px" }}>
       <div style={{ maxWidth: 680, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ color: "#8C826E", letterSpacing: "0.18em", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", marginBottom: 12 }}>
+          <div style={{ color: "#6E8598", letterSpacing: "0.18em", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", marginBottom: 12 }}>
             Agency AI Lab — Fix Plan
           </div>
-          <h1 style={{ fontFamily: "Georgia, ui-serif, serif", fontSize: 30, lineHeight: 1.25, marginBottom: 12 }}>
+          <h1 style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: 30, lineHeight: 1.25, marginBottom: 12 }}>
             {router.isReady && business ? (
               wasCited ? (
                 <>{businessName} showed up — here's how to rank higher.</>
@@ -95,7 +95,7 @@ export default function FixPlan() {
               <>You're not in the sources AI checks. Here's the fix.</>
             )}
           </h1>
-          <p style={{ color: "#79705C", fontSize: 15 }}>
+          <p style={{ color: "#5A7186", fontSize: 15 }}>
             {wasCited
               ? "Being named once isn't the same as being the name AI defaults to. Here's what closes that gap."
               : "Most businesses have never checked. Here's what we found, and what closes the gap."}
@@ -104,7 +104,7 @@ export default function FixPlan() {
 
         {competitorList.length > 0 && (
           <div style={{ ...card, marginBottom: 20 }}>
-            <div style={{ color: "#79705C", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", marginBottom: 8 }}>
+            <div style={{ color: "#5A7186", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", marginBottom: 8 }}>
               Named instead of you
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, fontFamily: "ui-monospace, monospace", fontSize: 14 }}>
@@ -117,12 +117,12 @@ export default function FixPlan() {
 
         <div style={{ ...card, marginBottom: 20 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 600, fontSize: 15, marginBottom: 14 }}>
-            <TrendingDown size={18} color="#A83A24" />
+            <TrendingDown size={18} color="#C0392B" />
             Why This Is Worth Fixing Now
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {reasons.map((r, i) => (
-              <div key={i} style={{ fontSize: 14, color: "#221B12", lineHeight: 1.5, paddingLeft: 16, borderLeft: "2px solid #A83A24" }}>
+              <div key={i} style={{ fontSize: 14, color: "#16232E", lineHeight: 1.5, paddingLeft: 16, borderLeft: "2px solid #C0392B" }}>
                 {r}
               </div>
             ))}
@@ -134,14 +134,14 @@ export default function FixPlan() {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {INCLUDED.map((item, i) => (
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                <CheckCircle2 size={18} color="#C2790E" style={{ flexShrink: 0, marginTop: 1 }} />
-                <span style={{ fontSize: 14, color: "#221B12" }}>{item}</span>
+                <CheckCircle2 size={18} color="#0084CC" style={{ flexShrink: 0, marginTop: 1 }} />
+                <span style={{ fontSize: 14, color: "#16232E" }}>{item}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div style={{ background: "#C2790E", color: "#FAF7F0", borderRadius: 12, padding: "14px 18px", textAlign: "center", fontSize: 14, fontWeight: 600, marginBottom: 32 }}>
+        <div style={{ background: "#0084CC", color: "#FFFFFF", borderRadius: 12, padding: "14px 18px", textAlign: "center", fontSize: 14, fontWeight: 600, marginBottom: 32 }}>
           No obligation. If we're not a fit, we'll tell you on the call.
         </div>
 
@@ -149,8 +149,8 @@ export default function FixPlan() {
         {contactPhase === "form" && (
           <div style={card}>
             <div style={{ textAlign: "center", marginBottom: 18 }}>
-              <h2 style={{ fontFamily: "Georgia, ui-serif, serif", fontSize: 22, marginBottom: 6 }}>Get Your Full Fix Plan</h2>
-              <p style={{ color: "#79705C", fontSize: 13 }}>Ray or Kelly reviews it personally — no call center hand-off.</p>
+              <h2 style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: 22, marginBottom: 6 }}>Get Your Full Fix Plan</h2>
+              <p style={{ color: "#5A7186", fontSize: 13 }}>Ray or Kelly reviews it personally — no call center hand-off.</p>
             </div>
             <form onSubmit={submitContact} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
@@ -161,7 +161,7 @@ export default function FixPlan() {
                 <label style={label}>Phone</label>
                 <input type="tel" value={contact.phone} onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))} style={input} required />
               </div>
-              <button type="submit" style={{ background: "#C2790E", color: "#FAF7F0", border: "none", borderRadius: 8, padding: "13px 0", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>
+              <button type="submit" style={{ background: "#0084CC", color: "#FFFFFF", border: "none", borderRadius: 8, padding: "13px 0", fontWeight: 600, fontSize: 15, cursor: "pointer" }}>
                 Continue to Book a Time &rarr;
               </button>
             </form>
@@ -169,37 +169,37 @@ export default function FixPlan() {
         )}
 
         {contactPhase === "submitting" && (
-          <div style={{ ...card, textAlign: "center", color: "#79705C" }}>Saving your info...</div>
+          <div style={{ ...card, textAlign: "center", color: "#5A7186" }}>Saving your info...</div>
         )}
 
         {contactPhase === "error" && (
           <div style={{ ...card, textAlign: "center" }}>
-            <p style={{ color: "#A83A24", marginBottom: 12 }}>{errorMsg}</p>
-            <button onClick={() => setContactPhase("form")} style={{ background: "#D9D0BC", border: "none", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}>Try Again</button>
+            <p style={{ color: "#C0392B", marginBottom: 12 }}>{errorMsg}</p>
+            <button onClick={() => setContactPhase("form")} style={{ background: "#D3DEE7", border: "none", borderRadius: 8, padding: "10px 20px", cursor: "pointer" }}>Try Again</button>
           </div>
         )}
 
         {contactPhase === "booking" && (
           <div style={card}>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
-              <h2 style={{ fontFamily: "Georgia, ui-serif, serif", fontSize: 22, marginBottom: 6 }}>Pick a Time</h2>
-              <p style={{ color: "#79705C", fontSize: 13 }}>Got it, {contact.name}. Choose whatever works for you below.</p>
+              <h2 style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', sans-serif", fontSize: 22, marginBottom: 6 }}>Pick a Time</h2>
+              <p style={{ color: "#5A7186", fontSize: 13 }}>Got it, {contact.name}. Choose whatever works for you below.</p>
             </div>
             {CALENDAR_EMBED_URL ? (
               <div style={{ width: "100%", height: 600, borderRadius: 6, overflow: "hidden" }}>
                 <iframe src={CALENDAR_EMBED_URL} style={{ width: "100%", height: "100%", border: "none" }} title="Book a call" />
               </div>
             ) : (
-              <p style={{ textAlign: "center", color: "#79705C", fontSize: 14 }}>
+              <p style={{ textAlign: "center", color: "#5A7186", fontSize: 14 }}>
                 Thanks — we've got your info and will reach out shortly to schedule.
                 <br />
-                <span style={{ fontSize: 12, color: "#A83A24" }}>(Calendar embed not yet configured — add CALENDAR_EMBED_URL in fix-plan.js)</span>
+                <span style={{ fontSize: 12, color: "#C0392B" }}>(Calendar embed not yet configured — add CALENDAR_EMBED_URL in fix-plan.js)</span>
               </p>
             )}
           </div>
         )}
 
-        <p style={{ color: "#8C826E", fontSize: 12, textAlign: "center", marginTop: 32, lineHeight: 1.6 }}>
+        <p style={{ color: "#6E8598", fontSize: 12, textAlign: "center", marginTop: 32, lineHeight: 1.6 }}>
           No AI platform guarantees inclusion in generated answers. Results reflect a
           point-in-time check, not a permanent status.
         </p>
