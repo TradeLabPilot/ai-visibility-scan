@@ -103,12 +103,14 @@ STEP 2 - Now examine the answer you just gave:
 - Which businesses did you name instead?
 - What did you actually rely on to decide? Name the specific sources, whatever they turned out to be.
 
+STEP 3 - Now diagnose THIS business specifically. Compare what you found about "${businessName}" against the businesses you did name. Identify up to 3 concrete, checkable gaps - things the named businesses have that this one appears to lack in the places your answer drew from. Be specific and factual: name the source or signal. Only list a gap you actually saw evidence for. If you could not find enough about this business to tell, say exactly that instead of guessing.
+
 Set "cited" to true ONLY if your own STEP 1 answer named the business. If your searches returned too little to answer properly, set confidence to "low" rather than guessing.
 
 Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line is required and must always be the last thing you output.
 
 Write the short summary, then on its own line write exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide"}`;
+RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide", "gaps": ["specific checkable gap 1","gap 2","gap 3"]}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
