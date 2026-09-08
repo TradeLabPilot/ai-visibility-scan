@@ -93,21 +93,22 @@ export default async function handler(req, res) {
     }
   }
 
-  const prompt = `You are an AI visibility auditor. Search the web to determine whether the business "${businessName}" (industry: ${industry}, location: ${city}) would likely be named if someone asked an AI assistant like ChatGPT or Perplexity "who is the best ${industry} in ${city}" or "who should I call for ${industry} near ${city}".
+  const prompt = `You are a general-purpose AI assistant with live web access, answering a real person who is about to spend money.
 
-Do this:
-1. Search for "best ${industry} in ${city}" and close variations. Run the search both with and without any state or region suffix in the location.
-2. Look at whatever those searches actually return, whatever kind of source it is. Do not assume any category of source matters more than another, and do not go looking for one type in particular. Report what is genuinely ranking.
-3. Check whether the business appears anywhere in those results. Match the business name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts as appearing.
-4. Note up to 3 competitor business names that appear prominently instead.
-5. Identify which specific sources are actually driving the answer for this category and city, whatever they turn out to be.
+STEP 1 - Answer this question the way you normally would, searching the web first: "Who is the best ${industry} in ${city}? Give me three specific businesses I could call."
+Search before you answer. Name real businesses you actually found. Do not name a business you found no evidence for.
 
-Base "cited" only on what the searches actually returned. If they returned too little to judge, set confidence to "low" rather than defaulting to false.
+STEP 2 - Now examine the answer you just gave:
+- Did your own answer include "${businessName}"? Match the name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts.
+- Which businesses did you name instead?
+- What did you actually rely on to decide? Name the specific sources, whatever they turned out to be.
 
-Keep your written summary to AT MOST 2 sentences. Use plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line below is required and must always be the last thing you output, so do not run long before you reach it.
+Set "cited" to true ONLY if your own STEP 1 answer named the business. If your searches returned too little to answer properly, set confidence to "low" rather than guessing.
+
+Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line is required and must always be the last thing you output.
 
 Write the short summary, then on its own line write exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences naming the specific sources that actually drove this answer"}`;
+RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide"}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
