@@ -137,6 +137,10 @@ OUTPUT RULES - a busy business owner reads this on a phone:
 - note: ONE sentence, 20 words maximum.
 - gaps: SHORT PHRASES, 8 words maximum each. Not sentences. Examples: "No Yelp or Zillow profile", "No website - Facebook page only", "Zero third-party reviews found".
 - Only state what you actually saw. If search 2 found too little, return fewer gaps and set confidence low.
+- NEVER claim a business has no website, no profile or no reviews. You cannot know that from a search - you only know what did not surface. Always phrase absence as a visibility finding, not an existence claim.
+  Write "Website not surfacing for your own name" - never "No official website found".
+  Write "No Yelp profile surfacing" - never "No Yelp profile".
+  This matters: the business owner reading it knows what they have, and a wrong claim ends the conversation.
 - Plain text only. No markdown, bold, headings or bullets.
 
 Output the one-sentence finding, then on its own line exactly:
