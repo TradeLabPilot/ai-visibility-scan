@@ -128,7 +128,7 @@ export default async function handler(req, res) {
   const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 2 searches total.
 
 Search 1: "best ${industry} in ${city}" - from the results, name the three businesses most likely to be recommended.
-Search 2: "${businessName} ${city}" - find what exists for it: website, profiles, reviews, listings.
+Search 2: search the business by EXACT name with the quotation marks included, like this: "${businessName}" ${city}  -  find what exists for it: official website, profiles, reviews, listings. The quotes matter: a business name made of ordinary words gets buried under directory sites without them. If the quoted search finds an official website, say so - do not report "no website" unless the quoted search genuinely returned none.
 
 "named" must be exactly the three businesses you would actually recommend, in order, whether or not "${businessName}" is among them. Do not leave it out to be polite and do not add it to be kind. Report honestly - the verdict is computed from this list, not from your opinion.
 
