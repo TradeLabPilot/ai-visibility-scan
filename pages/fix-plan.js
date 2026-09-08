@@ -7,10 +7,10 @@ import { CheckCircle2, TrendingDown } from "lucide-react";
 const CALENDAR_EMBED_URL = "https://get.agencyailab.com/widget/bookings/call-78935dfb-5a44-45c2-bd97-85a506ec63d5-7d4e9869-3464-4384-b6b2-e22431c231f0-9faed237-2c74-4608-9d09-40a949c48211";
 
 const INCLUDED = [
-  "100+ directory sync — accurate listings everywhere AI checks",
-  "Citation building across ChatGPT, Perplexity, and Google AI",
-  "Missed-call AI text-back — no lead goes cold after hours",
-  "Monthly visibility report — see the exact number, not a guess",
+  "Directory and listing sync — one accurate record across the sites AI reads",
+  "Content and citation work aimed at the sources those answers get built from",
+  "Missed-call text-back — every missed call gets an instant reply, day or night",
+  "Monthly visibility report — the same scan re-run, so you can see movement",
 ];
 
 export default function FixPlan() {
@@ -39,9 +39,9 @@ export default function FixPlan() {
       ]
     : [
         topCompetitor
-          ? `Every month this stays unfixed, ${topCompetitor} keeps getting the calls that should be yours.`
-          : "Every month this stays unfixed, a competitor keeps getting the calls that should be yours.",
-        "Missed calls are going to voicemail right now — most callers don't leave a message, they just call the next name.",
+          ? `Right now, ${topCompetitor} is showing up where your customers are looking. You're not.`
+          : "Right now, competitors are showing up where your customers are looking. You're not.",
+        "If a call comes in while you're on a job, most callers don't leave a message — they call the next name on the list.",
         "Inconsistent directory listings actively work against you: they confuse both customers and the AI models reading them.",
       ];
 
@@ -89,16 +89,16 @@ export default function FixPlan() {
               wasCited ? (
                 <>{businessName} showed up — here's how to rank higher.</>
               ) : (
-                <>{businessName} is invisible to AI in {industryName}.</>
+                <>{businessName} isn't showing up in the sources AI checks for {industryName}.</>
               )
             ) : (
-              <>You're invisible to AI. Here's the fix.</>
+              <>You're not in the sources AI checks. Here's the fix.</>
             )}
           </h1>
           <p style={{ color: "#79705C", fontSize: 15 }}>
             {wasCited
               ? "Being named once isn't the same as being the name AI defaults to. Here's what closes that gap."
-              : "Most businesses in your position have no idea it's costing them calls — until now."}
+              : "Most businesses have never checked. Here's what we found, and what closes the gap."}
           </p>
         </div>
 
@@ -142,7 +142,7 @@ export default function FixPlan() {
         </div>
 
         <div style={{ background: "#C2790E", color: "#FAF7F0", borderRadius: 12, padding: "14px 18px", textAlign: "center", fontSize: 14, fontWeight: 600, marginBottom: 32 }}>
-          Submit within 24 hours and get your directory sync setup free — a $500 value.
+          No obligation. If we're not a fit, we'll tell you on the call.
         </div>
 
         {/* CONTACT FORM -> STRAIGHT TO CALENDAR */}
