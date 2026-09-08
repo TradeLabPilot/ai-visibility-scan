@@ -185,6 +185,7 @@ RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "mediu
     const norm = (v) =>
       String(v || "")
         .toLowerCase()
+        .replace(/['’]/g, "")
         .replace(/[^a-z0-9 ]+/g, " ")
         .replace(/\b(inc|llc|llp|ltd|co|corp|company|the|group|team|realty|real estate)\b/g, " ")
         .replace(/\s+/g, " ")
@@ -192,10 +193,22 @@ RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "mediu
 
     const target = norm(businessName);
     const named = Array.isArray(parsed.named) ? parsed.named : [];
-    const isMatch = (candidate) => {
+    // Containment only on whole words and only for strings long enough to be
+    // meaningful - otherwise a competitor called "A" matches every business.
+    const contains = (hay, needle) => {
+      if (needle.length < 5) return false;
+      const esc = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\    const isMatch = (candidate) => {
       const c = norm(candidate);
       if (!c || !target) return false;
       return c === target || c.includes(target) || target.includes(c);
+    };");
+      return new RegExp("(^| )" + esc + "( |$)").test(hay);
+    };
+
+    const isMatch = (candidate) => {
+      const c = norm(candidate);
+      if (!c || !target) return false;
+      return c === target || contains(c, target) || contains(target, c);
     };
 
     parsed.cited = named.some(isMatch);
