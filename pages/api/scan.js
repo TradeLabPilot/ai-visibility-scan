@@ -97,13 +97,15 @@ export default async function handler(req, res) {
 
 Do this:
 1. Search for "best ${industry} in ${city}" and close variations. Run the search both with and without any state or region suffix in the location.
-2. Check whether the business appears in results, directories, or ranking/review pages that AI tools commonly cite. Match the business name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts as appearing.
-3. Note up to 3 competitor business names that appear prominently instead.
+2. Look at whatever those searches actually return, whatever kind of source it is. Do not assume any category of source matters more than another, and do not go looking for one type in particular. Report what is genuinely ranking.
+3. Check whether the business appears anywhere in those results. Match the business name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts as appearing.
+4. Note up to 3 competitor business names that appear prominently instead.
+5. Identify which specific sources are actually driving the answer for this category and city, whatever they turn out to be.
 
 Base "cited" only on what the searches actually returned. If they returned too little to judge, set confidence to "low" rather than defaulting to false.
 
 Respond with a short 2-sentence plain-English summary, then on its own line write exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one short diagnostic sentence"}`;
+RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences naming the specific sources that actually drove this answer"}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
