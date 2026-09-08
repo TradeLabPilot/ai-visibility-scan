@@ -125,10 +125,12 @@ export default async function handler(req, res) {
     }
   }
 
-  const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 2 searches total.
+  const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 3 searches total. Use the third only if search 2 earns it.
 
 Search 1: "best ${industry} in ${city}" - from the results, name the three businesses most likely to be recommended.
-Search 2: search the business by EXACT name with the quotation marks included, like this: "${businessName}" ${city}  -  find what exists for it: official website, profiles, reviews, listings. The quotes matter: a business name made of ordinary words gets buried under directory sites without them. If the quoted search finds an official website, say so - do not report "no website" unless the quoted search genuinely returned none.
+Search 2: search the business by EXACT name with the quotation marks included, like this: "${businessName}" ${city}  -  find its official website, profiles, reviews and listings. The quotes matter: a name made of ordinary words gets buried under directory sites without them.
+
+Search 3 (ONLY if search 2 revealed the business also trades under a DIFFERENT name - a team name, a DBA, an owner name, a franchise or brokerage name): search that other name too. Businesses are very often listed under a name other than the one they typed in, and judging them on the typed name alone produces a false result. If search 2 revealed no alternate name, skip search 3 entirely.
 
 "named" must be exactly the three businesses you would actually recommend, in order, whether or not "${businessName}" is among them. Do not leave it out to be polite and do not add it to be kind. Report honestly - the verdict is computed from this list, not from your opinion.
 
@@ -140,6 +142,7 @@ OUTPUT RULES - a busy business owner reads this on a phone:
 - NEVER claim a business has no website, no profile or no reviews. You cannot know that from a search - you only know what did not surface. Always phrase absence as a visibility finding, not an existence claim.
   Write "Website not surfacing for your own name" - never "No official website found".
   Write "No Yelp profile surfacing" - never "No Yelp profile".
+- If the business appears under several different names, say so - that is one of the most useful gaps you can report. Example: "Listed under 3 different names".
   This matters: the business owner reading it knows what they have, and a wrong claim ends the conversation.
 - Plain text only. No markdown, bold, headings or bullets.
 
@@ -159,7 +162,7 @@ RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "mediu
         max_tokens: 900,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
       }),
     });
 
