@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Radar, ArrowRight, RotateCcw, TriangleAlert } from "lucide-react";
 
 const BONUS_TEXT =
-  "Book within 24 hours and we'll include your directory sync setup free — a $500 value.";
+  "No cost, no obligation — we'll show you what we found either way.";
 
 const SCAN_LINES = [
-  "Querying live AI sources...",
+  "Searching the sources AI cites...",
   "Checking directory citations...",
   "Cross-referencing competitor mentions...",
   "Compiling visibility verdict...",
@@ -95,10 +95,10 @@ export default function Home() {
             Agency AI Lab — Visibility Scan
           </div>
           <h1 style={{ fontFamily: "Georgia, ui-serif, serif", letterSpacing: "-0.01em", color: "#221B12", fontSize: 30, lineHeight: 1.2, marginBottom: 8 }}>
-            If AI can't see you,<br />you don't exist.
+            AI has already picked<br />who to recommend.
           </h1>
           <p style={{ color: "#79705C", fontSize: 14 }}>
-            Find out whether AI recommends you — or your competitor.
+            Find out who it named in your category — and whether you're on the list.
           </p>
         </div>
 
@@ -143,7 +143,7 @@ export default function Home() {
         {phase === "result" && result && (
           <div style={card}>
             <div style={{ color: result.cited ? "#C2790E" : "#A83A24", fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
-              {result.cited ? "You're on the radar" : "You're invisible to AI"}
+              {result.cited ? "You're on the radar" : "You're not in the sources AI cites"}
             </div>
             <p style={{ color: "#221B12", fontSize: 14, marginBottom: 16 }}>{result.note}</p>
 
