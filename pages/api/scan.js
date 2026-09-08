@@ -16,7 +16,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const { businessName, industry, city, email } = req.body || {};
+  // Normalize inputs before they reach the prompt. Without this, "McDonalds",
+  // "McDonald's" and "  MCDONALDS " build three different search queries and
+  // can return three different verdicts for the same business.
+  const clean = (v) => String(v || "").trim().replace(/\s+/g, " ");
+  const businessName = clean(req.body?.businessName);
+  const industry = clean(req.body?.industry).toLowerCase();
+  const city = clean(req.body?.city);
+  const email = clean(req.body?.email);
   if (!businessName || !industry || !city || !email) {
     return res.status(400).json({ error: "Missing businessName, industry, city, or email" });
   }
@@ -45,9 +52,11 @@ export default async function handler(req, res) {
   const prompt = `You are an AI visibility auditor. Search the web to determine whether the business "${businessName}" (industry: ${industry}, location: ${city}) would likely be named if someone asked an AI assistant like ChatGPT or Perplexity "who is the best ${industry} in ${city}" or "who should I call for ${industry} near ${city}".
 
 Do this:
-1. Search for "best ${industry} in ${city}" and close variations.
-2. Check whether "${businessName}" appears in results, directories, or ranking/review pages that AI tools commonly cite.
+1. Search for "best ${industry} in ${city}" and close variations. Run the search both with and without any state or region suffix in the location.
+2. Check whether the business appears in results, directories, or ranking/review pages that AI tools commonly cite. Match the business name LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A listing under a slightly different trading name still counts as appearing.
 3. Note up to 3 competitor business names that appear prominently instead.
+
+Base "cited" only on what the searches actually returned. If they returned too little to judge, set confidence to "low" rather than defaulting to false.
 
 Respond with a short 2-sentence plain-English summary, then on its own line write exactly:
 RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one short diagnostic sentence"}`;
@@ -63,6 +72,7 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 1000,
+        temperature: 0,
         messages: [{ role: "user", content: prompt }],
         tools: [{ type: "web_search_20250305", name: "web_search" }],
       }),
