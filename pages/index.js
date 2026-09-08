@@ -47,6 +47,14 @@ export default function Home() {
       });
 
       const data = await response.json();
+
+      // A rejected email (or any 4xx) comes back with a plain reason. Show it
+      // right away instead of sitting through the scan animation first.
+      if (!response.ok && data.error) {
+        setErrorMsg(data.error);
+        setPhase("error");
+        return;
+      }
       const elapsed = Date.now() - startedAt;
       const minWait = 2200;
       if (elapsed < minWait) await new Promise((r) => setTimeout(r, minWait - elapsed));
@@ -177,7 +185,7 @@ export default function Home() {
         {phase === "error" && (
           <div style={card}>
             <div style={{ color: "#C0392B", display: "flex", alignItems: "center", gap: 8, fontWeight: 600, marginBottom: 8 }}>
-              <TriangleAlert size={18} /> Scan didn't complete
+              <TriangleAlert size={18} /> Scan didn't run
             </div>
             <p style={{ color: "#5A7186", fontSize: 14, marginBottom: 16 }}>{errorMsg}</p>
             <button onClick={reset} style={{ background: "#D3DEE7", color: "#16232E", width: "100%", borderRadius: 8, padding: "8px 0", fontSize: 14, border: "none", cursor: "pointer" }}>
