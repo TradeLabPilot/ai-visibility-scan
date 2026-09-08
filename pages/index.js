@@ -153,6 +153,12 @@ export default function Home() {
             <div style={{ color: result.cited ? "#0084CC" : "#C0392B", fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
               {result.cited ? "You're on the radar" : "You're not in the sources AI cites"}
             </div>
+            {result.confidence && (
+              <div style={{ color: "#5A7186", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>
+                Confidence: {result.confidence}
+                {result.confidence === "low" ? " — thin results, treat as directional" : ""}
+              </div>
+            )}
             <p style={{ color: "#16232E", fontSize: 14, marginBottom: 16 }}>{result.note}</p>
 
             {result.competitors && result.competitors.length > 0 && (
