@@ -11,6 +11,44 @@
 // trigger. GHL gives you a unique POST URL — paste that in as GHL_WEBHOOK_URL.
 // No API key needed for this method, just that URL.
 
+import { promises as dnsPromises } from "dns";
+
+// Reject addresses that can never receive mail: known throwaway/test domains,
+// and any domain with no MX record (catches invented domains and typos like
+// "gmial.com"). This runs BEFORE the GHL webhook so junk never enters the CRM.
+const BLOCKED_EMAIL_DOMAINS = new Set([
+  "test.com", "test.net", "test.org", "example.com", "example.net", "example.org",
+  "fake.com", "fakemail.com", "nomail.com", "none.com", "asdf.com",
+  "mailinator.com", "guerrillamail.com", "guerrillamail.net", "sharklasers.com",
+  "10minutemail.com", "tempmail.com", "temp-mail.org", "throwawaymail.com",
+  "yopmail.com", "trashmail.com", "getnada.com", "dispostable.com", "maildrop.cc",
+  "fakeinbox.com", "spam4.me", "mailnesia.com", "tempinbox.com", "emailondeck.com",
+  "moakt.com", "mohmal.com", "inboxbear.com", "discard.email", "tmpmail.org",
+]);
+
+async function validateEmail(email) {
+  const at = email.lastIndexOf("@");
+  if (at < 1 || at === email.length - 1) {
+    return { ok: false, reason: "That does not look like a valid email address." };
+  }
+  const domain = email.slice(at + 1).toLowerCase();
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/.test(domain)) {
+    return { ok: false, reason: "That does not look like a valid email address." };
+  }
+  if (BLOCKED_EMAIL_DOMAINS.has(domain)) {
+    return { ok: false, reason: "Please use a real email address so we can send you the results." };
+  }
+  try {
+    const mx = await dnsPromises.resolveMx(domain);
+    if (!mx || mx.length === 0) {
+      return { ok: false, reason: "We could not find a mail server for that domain. Check the spelling?" };
+    }
+  } catch (err) {
+    return { ok: false, reason: "We could not find a mail server for that domain. Check the spelling?" };
+  }
+  return { ok: true };
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -26,6 +64,12 @@ export default async function handler(req, res) {
   const email = clean(req.body?.email);
   if (!businessName || !industry || !city || !email) {
     return res.status(400).json({ error: "Missing businessName, industry, city, or email" });
+  }
+
+  // Reject unusable email addresses before anything else happens.
+  const emailCheck = await validateEmail(email);
+  if (!emailCheck.ok) {
+    return res.status(400).json({ error: emailCheck.reason });
   }
 
   // Fire the lead into GHL immediately — don't wait on the scan to finish,
