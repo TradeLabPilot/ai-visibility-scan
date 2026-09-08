@@ -73,10 +73,15 @@ export default async function handler(req, res) {
         industry,
         city,
         cited: req.body?.cited,
+        // Readable version - cited is a raw boolean and maps badly to GHL text fields
+        namedYou: req.body?.cited === true ? "YES" : "NO",
         competitors: Array.isArray(req.body?.competitors)
           ? req.body.competitors.join(", ")
           : "",
-        source: "AI Visibility Scan - result screen",
+        // Keep source EXACTLY as the original scan sent it so any existing GHL
+        // filter still matches. Use "step" to tell the capture points apart.
+        source: "AI Visibility Scan",
+        step: "result screen",
         submittedAt: new Date().toISOString(),
       }),
     });
