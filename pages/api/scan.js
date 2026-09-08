@@ -143,7 +143,11 @@ STEP 4 - Report:
 
 Set "cited" to true ONLY if your own STEP 2 answer named the business. If your searches returned too little to answer properly, set confidence to "low".
 
-Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line is required and must always be the last thing you output.
+Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points.
+
+The summary and the note are read by a business owner, not by you. NEVER refer to your own process: do not write "Step 1", "Step 2", "my search", "I searched" or anything describing how you worked. Report the finding, not the procedure. Write "AI recommends X, Y and Z" - never "My Step 2 named X, Y and Z".
+
+The RESULT_JSON line is required and must always be the last thing you output.
 
 Write the short summary, then on its own line write exactly:
 RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide", "gaps": ["specific checkable gap 1","a materially different gap 2","a materially different gap 3"]}`;
