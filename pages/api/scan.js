@@ -193,16 +193,12 @@ RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "mediu
 
     const target = norm(businessName);
     const named = Array.isArray(parsed.named) ? parsed.named : [];
-    // Containment only on whole words and only for strings long enough to be
+    // Containment only on whole words, and only for strings long enough to be
     // meaningful - otherwise a competitor called "A" matches every business.
+    // norm() leaves only letters, digits and spaces, so there is nothing to escape.
     const contains = (hay, needle) => {
       if (needle.length < 5) return false;
-      const esc = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\    const isMatch = (candidate) => {
-      const c = norm(candidate);
-      if (!c || !target) return false;
-      return c === target || c.includes(target) || target.includes(c);
-    };");
-      return new RegExp("(^| )" + esc + "( |$)").test(hay);
+      return new RegExp("(^| )" + needle + "( |$)").test(hay);
     };
 
     const isMatch = (candidate) => {
