@@ -104,7 +104,9 @@ Do this:
 
 Base "cited" only on what the searches actually returned. If they returned too little to judge, set confidence to "low" rather than defaulting to false.
 
-Respond with a short 2-sentence plain-English summary, then on its own line write exactly:
+Keep your written summary to AT MOST 2 sentences. Use plain text only - no markdown, no bold, no headings, no bullet points. The RESULT_JSON line below is required and must always be the last thing you output, so do not run long before you reach it.
+
+Write the short summary, then on its own line write exactly:
 RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences naming the specific sources that actually drove this answer"}`;
 
   try {
@@ -117,7 +119,7 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 1000,
+        max_tokens: 3000,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
         tools: [{ type: "web_search_20250305", name: "web_search" }],
@@ -130,7 +132,9 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       .map((b) => b.text)
       .join("\n");
 
-    const match = textBlocks.match(/RESULT_JSON:\s*(\{[\s\S]*\})/);
+    let match = textBlocks.match(/RESULT_JSON:\s*(\{[\s\S]*\})/);
+    // Fallback: the model sometimes omits the marker but still emits the object.
+    if (!match) match = textBlocks.match(/(\{[\s\S]*?"cited"[\s\S]*?\})/);
     if (!match) {
       return res.status(200).json({ parsed: null, raw: textBlocks });
     }
