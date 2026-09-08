@@ -151,7 +151,7 @@ export default function Home() {
         {phase === "result" && result && (
           <div style={card}>
             <div style={{ color: result.cited ? "#0084CC" : "#C0392B", fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
-              {result.cited ? "You're on the radar" : "You're not in the sources AI cites"}
+              {result.cited ? "AI named you" : "AI did not name you"}
             </div>
             {result.confidence && (
               <div style={{ color: "#5A7186", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 12 }}>
@@ -160,6 +160,21 @@ export default function Home() {
               </div>
             )}
             <p style={{ color: "#16232E", fontSize: 14, marginBottom: 16 }}>{result.note}</p>
+
+            {result.gaps && result.gaps.length > 0 && (
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ color: "#5A7186", fontSize: 12, fontFamily: "ui-monospace, monospace", textTransform: "uppercase", marginBottom: 8 }}>
+                  What is missing for you
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {result.gaps.map((g, i) => (
+                    <div key={i} style={{ fontSize: 14, color: "#16232E", lineHeight: 1.5, paddingLeft: 14, borderLeft: "2px solid #C0392B" }}>
+                      {g}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {result.competitors && result.competitors.length > 0 && (
               <div style={{ marginBottom: 20 }}>
