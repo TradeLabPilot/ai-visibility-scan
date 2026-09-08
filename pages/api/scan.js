@@ -125,32 +125,22 @@ export default async function handler(req, res) {
     }
   }
 
-  const prompt = `You are a general-purpose AI assistant with live web access, answering a real person who is about to spend money.
+  const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 2 searches total.
 
-STEP 1 - Research the category. Run exactly TWO searches, no more:
-  "best ${industry} in ${city}"
-  "${industry} ${city} reviews"
-Do NOT build your answer on a single ranked list from one site. Corroborate across at least two INDEPENDENT sources before naming anyone. If one aggregator dominates both queries, treat that as a finding to report, not as your only evidence. Be efficient - you have a hard limit of 3 searches for this entire task.
+Search 1: "best ${industry} in ${city}" - from the results, name the three businesses most likely to be recommended.
+Search 2: "${businessName} ${city}" - find what exists for it: website, profiles, reviews, listings.
 
-STEP 2 - Now answer the question the way you normally would: "Who is the best ${industry} in ${city}? Give me three specific businesses I could call." Name real businesses you actually found. Do not name a business you found no evidence for.
+Then decide whether your three names included "${businessName}". Match loosely: ignore capitalisation, punctuation, apostrophes and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A different trading name still counts.
 
-STEP 3 - Now run ONE search for the business itself: "${businessName} ${city}". Find out what exists for it - website, profiles, reviews, listings, mentions. This step is about THIS business, not the category. One search only.
+OUTPUT RULES - a busy business owner reads this on a phone:
+- Never mention your process, steps or searches. Report the finding only. Write "AI recommends X, Y and Z", never "my search found" or "Step 2 named".
+- note: ONE sentence, 20 words maximum.
+- gaps: SHORT PHRASES, 8 words maximum each. Not sentences. Examples: "No Yelp or Zillow profile", "No website - Facebook page only", "Zero third-party reviews found".
+- Only state what you actually saw. If search 2 found too little, return fewer gaps and set confidence low.
+- Plain text only. No markdown, bold, headings or bullets.
 
-STEP 4 - Report:
-- Did your own STEP 2 answer name "${businessName}"? Match LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A different trading name still counts.
-- Which businesses did you name instead?
-- Up to 3 gaps for this business, based on what STEP 3 actually found. THE THREE GAPS MUST BE MATERIALLY DIFFERENT FROM EACH OTHER - do not restate one absence three ways. Draw on different dimensions where the evidence supports it: what exists but is thin or inconsistent, what is missing entirely, what the named businesses demonstrate that this one does not. Say what the business DOES have before saying what it lacks. Only list a gap you actually saw evidence for. If STEP 3 found too little to judge, say exactly that instead of guessing.
-
-Set "cited" to true ONLY if your own STEP 2 answer named the business. If your searches returned too little to answer properly, set confidence to "low".
-
-Keep your written summary to AT MOST 2 sentences. Plain text only - no markdown, no bold, no headings, no bullet points.
-
-The summary and the note are read by a business owner, not by you. NEVER refer to your own process: do not write "Step 1", "Step 2", "my search", "I searched" or anything describing how you worked. Report the finding, not the procedure. Write "AI recommends X, Y and Z" - never "My Step 2 named X, Y and Z".
-
-The RESULT_JSON line is required and must always be the last thing you output.
-
-Write the short summary, then on its own line write exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one or two sentences: who you named, and what you relied on to decide", "gaps": ["specific checkable gap 1","a materially different gap 2","a materially different gap 3"]}`;
+Output the one-sentence finding, then on its own line exactly:
+RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one sentence, 20 words max", "gaps": ["8 words max","8 words max","8 words max"]}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -162,10 +152,10 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 2000,
+        max_tokens: 900,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],
       }),
     });
 
