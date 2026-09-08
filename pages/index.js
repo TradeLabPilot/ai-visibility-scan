@@ -161,7 +161,7 @@ export default function Home() {
               <Radar size={18} /> Run Visibility Scan
             </button>
             <p style={{ color: "#5A7186", fontSize: 12, textAlign: "center", marginTop: 10, lineHeight: 1.45 }}>
-              Takes about 30 seconds. It runs live searches, not a lookup.
+              Takes up to a minute. It runs live searches, not a lookup.
             </p>
           </form>
         )}
