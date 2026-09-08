@@ -130,7 +130,7 @@ export default async function handler(req, res) {
 Search 1: "best ${industry} in ${city}" - from the results, name the three businesses most likely to be recommended.
 Search 2: "${businessName} ${city}" - find what exists for it: website, profiles, reviews, listings.
 
-Then decide whether your three names included "${businessName}". Match loosely: ignore capitalisation, punctuation, apostrophes and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A different trading name still counts.
+"named" must be exactly the three businesses you would actually recommend, in order, whether or not "${businessName}" is among them. Do not leave it out to be polite and do not add it to be kind. Report honestly - the verdict is computed from this list, not from your opinion.
 
 OUTPUT RULES - a busy business owner reads this on a phone:
 - Never mention your process, steps or searches. Report the finding only. Write "AI recommends X, Y and Z", never "my search found" or "Step 2 named".
@@ -140,7 +140,7 @@ OUTPUT RULES - a busy business owner reads this on a phone:
 - Plain text only. No markdown, bold, headings or bullets.
 
 Output the one-sentence finding, then on its own line exactly:
-RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low", "competitors": ["name1","name2","name3"], "note": "one sentence, 20 words max", "gaps": ["8 words max","8 words max","8 words max"]}`;
+RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "medium" or "low", "note": "one sentence, 20 words max", "gaps": ["8 words max","8 words max","8 words max"]}`;
 
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
@@ -178,6 +178,28 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
     } catch (_) {
       return res.status(200).json({ parsed: null, raw: textBlocks });
     }
+
+    // The verdict is computed here, not taken from the model. Asking a model to
+    // both produce a list and judge its own list against a name produced false
+    // positives - "AI named you" while the business was absent from its own three.
+    const norm = (v) =>
+      String(v || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]+/g, " ")
+        .replace(/\b(inc|llc|llp|ltd|co|corp|company|the|group|team|realty|real estate)\b/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    const target = norm(businessName);
+    const named = Array.isArray(parsed.named) ? parsed.named : [];
+    const isMatch = (candidate) => {
+      const c = norm(candidate);
+      if (!c || !target) return false;
+      return c === target || c.includes(target) || target.includes(c);
+    };
+
+    parsed.cited = named.some(isMatch);
+    parsed.competitors = named.filter((n) => !isMatch(n));
 
     return res.status(200).json({ parsed });
   } catch (err) {
