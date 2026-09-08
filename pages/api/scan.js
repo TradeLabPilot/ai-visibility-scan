@@ -62,19 +62,21 @@ export default async function handler(req, res) {
   const industry = clean(req.body?.industry).toLowerCase();
   const city = clean(req.body?.city);
   const email = clean(req.body?.email);
-  if (!businessName || !industry || !city || !email) {
-    return res.status(400).json({ error: "Missing businessName, industry, city, or email" });
+  if (!businessName || !industry || !city) {
+    return res.status(400).json({ error: "Missing businessName, industry, or city" });
   }
 
   // Reject unusable email addresses before anything else happens.
-  const emailCheck = await validateEmail(email);
-  if (!emailCheck.ok) {
-    return res.status(400).json({ error: emailCheck.reason });
+  if (email) {
+    const emailCheck = await validateEmail(email);
+    if (!emailCheck.ok) {
+      return res.status(400).json({ error: emailCheck.reason });
+    }
   }
 
   // Fire the lead into GHL immediately — don't wait on the scan to finish,
   // and don't let a webhook failure break the scan itself.
-  if (process.env.GHL_WEBHOOK_URL) {
+  if (email && process.env.GHL_WEBHOOK_URL) {
     try {
       await fetch(process.env.GHL_WEBHOOK_URL, {
         method: "POST",
