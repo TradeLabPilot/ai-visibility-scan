@@ -49,9 +49,39 @@ async function validateEmail(email) {
   return { ok: true };
 }
 
+// Crude per-IP throttle. Resets on cold start and is not shared across serverless
+// instances, so it will not stop a determined attacker - but it stops an accidental
+// loop or casual abuse, which is what actually runs up the bill on a public endpoint
+// that costs money per call.
+//
+// EVENT DAY: everyone on shared venue wifi looks like ONE ip. Raise MAX_PER_WINDOW
+// to 40 before a live demo, then put it back.
+const RATE = new Map();
+const WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const MAX_PER_WINDOW = 8;
+
+function rateLimited(req) {
+  const ip =
+    (req.headers["x-forwarded-for"] || "").split(",")[0].trim() ||
+    req.socket?.remoteAddress ||
+    "unknown";
+  const now = Date.now();
+  const hits = (RATE.get(ip) || []).filter((t) => now - t < WINDOW_MS);
+  hits.push(now);
+  RATE.set(ip, hits);
+  if (RATE.size > 5000) RATE.clear();
+  return hits.length > MAX_PER_WINDOW;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (rateLimited(req)) {
+    return res.status(429).json({
+      error: "That is a lot of scans from one place. Try again in a little while.",
+    });
   }
 
   // Normalize inputs before they reach the prompt. Without this, "McDonalds",
@@ -97,16 +127,14 @@ export default async function handler(req, res) {
 
   const prompt = `You are a general-purpose AI assistant with live web access, answering a real person who is about to spend money.
 
-STEP 1 - Research the category properly. Run SEVERAL different searches, not one. At minimum:
+STEP 1 - Research the category. Run exactly TWO searches, no more:
   "best ${industry} in ${city}"
-  "top rated ${industry} ${city}"
   "${industry} ${city} reviews"
-  "who should I hire for ${industry} in ${city}"
-Do NOT build your answer on a single ranked list from one site. Corroborate across at least three INDEPENDENT sources before naming anyone. If one aggregator dominates every query, treat that as a finding to report, not as your only evidence.
+Do NOT build your answer on a single ranked list from one site. Corroborate across at least two INDEPENDENT sources before naming anyone. If one aggregator dominates both queries, treat that as a finding to report, not as your only evidence. Be efficient - you have a hard limit of 3 searches for this entire task.
 
 STEP 2 - Now answer the question the way you normally would: "Who is the best ${industry} in ${city}? Give me three specific businesses I could call." Name real businesses you actually found. Do not name a business you found no evidence for.
 
-STEP 3 - Now search for the business itself, directly and by name: "${businessName}", "${businessName} ${city}", "${businessName} reviews". Find out what actually exists for it - website, profiles, reviews, listings, mentions, coverage. This step is about THIS business, not the category.
+STEP 3 - Now run ONE search for the business itself: "${businessName} ${city}". Find out what exists for it - website, profiles, reviews, listings, mentions. This step is about THIS business, not the category. One search only.
 
 STEP 4 - Report:
 - Did your own STEP 2 answer name "${businessName}"? Match LOOSELY: ignore capitalisation, punctuation, apostrophes, and suffixes like Inc, LLC or Co. Treat "McDonalds", "McDonald's" and "MCDONALDS" as the same business. A different trading name still counts.
@@ -130,10 +158,10 @@ RESULT_JSON: {"cited": true or false, "confidence": "high" or "medium" or "low",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 4000,
+        max_tokens: 2000,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search" }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
       }),
     });
 
