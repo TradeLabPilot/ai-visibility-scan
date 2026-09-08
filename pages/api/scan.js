@@ -125,12 +125,11 @@ export default async function handler(req, res) {
     }
   }
 
-  const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 3 searches total. Use the third only if search 2 earns it.
+  const prompt = `You are an AI assistant with live web access. Be fast and brief. HARD LIMIT: 2 searches total.
 
 Search 1: "best ${industry} in ${city}" - from the results, name the three businesses most likely to be recommended.
-Search 2: search the business by EXACT name with the quotation marks included, like this: "${businessName}" ${city}  -  find its official website, profiles, reviews and listings. The quotes matter: a name made of ordinary words gets buried under directory sites without them.
-
-Search 3 (ONLY if search 2 revealed the business also trades under a DIFFERENT name - a team name, a DBA, an owner name, a franchise or brokerage name): search that other name too. Businesses are very often listed under a name other than the one they typed in, and judging them on the typed name alone produces a false result. If search 2 revealed no alternate name, skip search 3 entirely.
+Search 2: search ONLY the business name in quotes, with NO city and no other words: "${businessName}"
+Do not add the city to this search. Adding a city pulls in Zillow, Redfin and Realtor pages that bury the business itself. The city is already covered by search 1. From these results, find the official website, profiles, reviews and listings, and note any OTHER name the business also trades under - a team name, DBA, owner name or brokerage.
 
 "named" must be exactly the three businesses you would actually recommend, in order, whether or not "${businessName}" is among them. Do not leave it out to be polite and do not add it to be kind. Report honestly - the verdict is computed from this list, not from your opinion.
 
@@ -162,7 +161,7 @@ RESULT_JSON: {"named": ["name1","name2","name3"], "confidence": "high" or "mediu
         max_tokens: 900,
         temperature: 0,
         messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }],
+        tools: [{ type: "web_search_20250305", name: "web_search", max_uses: 2 }],
       }),
     });
 
