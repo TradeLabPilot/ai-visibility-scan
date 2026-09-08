@@ -5,10 +5,12 @@ const BONUS_TEXT =
   "No cost, no obligation — we'll show you what we found either way.";
 
 const SCAN_LINES = [
-  "Searching the sources AI cites...",
-  "Checking directory citations...",
-  "Cross-referencing competitor mentions...",
-  "Compiling visibility verdict...",
+  "Asking the question your customers ask...",
+  "Reading what actually ranks right now...",
+  "Seeing who gets recommended...",
+  "Looking up your business by name...",
+  "Comparing you against the names it found...",
+  "Writing up what is missing...",
 ];
 
 export default function Home() {
@@ -59,7 +61,7 @@ export default function Home() {
         return;
       }
       const elapsed = Date.now() - startedAt;
-      const minWait = 2200;
+      const minWait = 0;
       if (elapsed < minWait) await new Promise((r) => setTimeout(r, minWait - elapsed));
 
       if (data.parsed) {
@@ -158,6 +160,9 @@ export default function Home() {
             <button type="submit" style={{ ...goldBtn, marginTop: 8 }}>
               <Radar size={18} /> Run Visibility Scan
             </button>
+            <p style={{ color: "#5A7186", fontSize: 12, textAlign: "center", marginTop: 10, lineHeight: 1.45 }}>
+              Takes about 30 seconds. It runs live searches, not a lookup.
+            </p>
           </form>
         )}
 
@@ -176,6 +181,9 @@ export default function Home() {
             </div>
             <div style={{ color: "#5A7186", fontFamily: "ui-monospace, monospace", fontSize: 14, marginTop: 24, textAlign: "center" }}>
               {SCAN_LINES[lineIdx]}
+            </div>
+            <div style={{ color: "#16232E", fontSize: 15, marginTop: 14, textAlign: "center", maxWidth: 300, lineHeight: 1.45 }}>
+              &ldquo;Who is the best {form.industry || "provider"} in {form.city || "your area"}?&rdquo;
             </div>
           </div>
         )}
